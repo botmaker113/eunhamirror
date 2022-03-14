@@ -1,7 +1,8 @@
-import subprocess
-from bot import LOGGER, dispatcher
+from subprocess import run
 from telegram import ParseMode
 from telegram.ext import CommandHandler
+
+from bot import LOGGER, dispatcher
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.message_utils import sendMessage
@@ -11,9 +12,9 @@ def shell(update, context):
     message = update.effective_message
     cmd = message.text.split(' ', 1)
     if len(cmd) == 1:
-        return sendMessage('No command to execute was given.', context.bot, update)
+        return sendMessage('No command to execute was given.', context.bot, update.message)
     cmd = cmd[1]
-    process = subprocess.run(cmd, capture_output=True, shell=True)
+    process = run(cmd, capture_output=True, shell=True)
     reply = ''
     stderr = process.stderr.decode('utf-8')
     stdout = process.stdout.decode('utf-8')
@@ -33,9 +34,9 @@ def shell(update, context):
                 reply_to_message_id=message.message_id,
                 chat_id=message.chat_id)
     elif len(reply) != 0:
-        sendMessage(reply, context.bot, update)
+        sendMessage(reply, context.bot, update.message)
     else:
-        sendMessage('No Reply', context.bot, update)
+        sendMessage('No Reply', context.bot, update.message)
 
 
 SHELL_HANDLER = CommandHandler(BotCommands.ShellCommand, shell,
